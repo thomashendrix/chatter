@@ -351,3 +351,40 @@ donc master ? comment je fait par la suite pour pousser
 ### Actions réalisées
 
 - Explication : oui master ; désormais git push suffit grâce au tracking.
+
+---
+
+## 2026-07-15 20:26 — #19
+
+### Prompt exact
+
+`	ext
+what is git satus
+`
+
+### Résumé de la demande
+
+- Expliquer ce qu’est git status (typo probable).
+
+### Actions réalisées
+
+- Explication + affichage de l’état actuel du dépôt.
+
+---
+
+## 2026-07-15 20:27 — #20
+
+### Prompt exact
+
+`	ext
+make a readme, sophiscically, and push
+`
+
+### Résumé de la demande
+
+- Créer un README soigné à la racine, puis le pousser sur le remote.
+
+### Actions réalisées
+
+- Ajout de README.md (architecture, quick start, API, features).
+- Commit + git push vers origin/master.
