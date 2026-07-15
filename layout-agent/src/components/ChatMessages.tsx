@@ -26,6 +26,7 @@ export const ChatMessages: Component<ChatMessagesProps> = (props) => {
 					>
 						<div
 							class={styles.content}
+							classList={{ [styles.plain]: message.role === 'user' }}
 							innerHTML={message.role === 'user' ? message.content : renderMarkdown(message.content)}
 						/>
 					</div>

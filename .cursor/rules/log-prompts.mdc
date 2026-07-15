@@ -1,0 +1,15 @@
+---
+description: Forcer la journalisation de chaque prompt via le skill log-prompts
+alwaysApply: true
+---
+
+# Journaliser chaque prompt
+
+Sur **chaque** message utilisateur dans ce projet :
+
+1. Lire et suivre le skill `.cursor/skills/log-prompts/SKILL.md`.
+2. À la fin du tour, append une entrée dans `prompts-log.md` (racine) avec :
+   - le **prompt exact** (verbatim)
+   - un **résumé** de la demande
+   - les **actions réalisées**
+3. Ne pas omettre cette étape, même pour une question courte ou une simple explication.

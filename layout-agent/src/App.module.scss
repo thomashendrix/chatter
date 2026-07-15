@@ -2,12 +2,12 @@
 
 .page {
 	height: 100vh;
-	padding: 20px;
+	padding: $space-3;
 }
 
 .layout {
 	display: flex;
-	gap: 16px;
+	gap: $space-3;
 	height: 100%;
 }
 
@@ -30,11 +30,11 @@
 
 .composerShell {
 	border-top: 1px solid $color-border;
-	padding: 16px;
+	padding: $space-3 $space-4;
 	background: $color-surface-soft;
 }
 
 .error {
-	margin: 12px 0 0;
+	margin: $space-3 0 0;
 	color: $color-danger;
 }

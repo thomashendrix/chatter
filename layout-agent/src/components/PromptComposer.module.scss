@@ -2,21 +2,23 @@
 
 .composer {
 	display: flex;
-	gap: 10px;
+	gap: $space-3;
 	align-items: flex-end;
 }
 
 .input {
 	flex: 1;
-	padding: 10px 12px;
+	padding: $space-3 $space-4;
 	border-radius: $radius-md;
 	border: 1px solid $color-border-strong;
 	resize: vertical;
-	min-height: 88px;
+	min-height: 64px;
+	line-height: 1.4;
+	font-family: inherit;
 }
 
 .send {
-	padding: 10px 16px;
+	padding: $space-3 $space-5;
 	border-radius: $radius-md;
 	border: none;
 	background: $color-primary;

@@ -3,22 +3,22 @@
 .list {
 	flex: 1;
 	overflow: auto;
-	padding: 16px;
+	padding: $space-4 $space-5;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: $space-2;
 }
 
 .empty {
 	color: $color-text-faint;
-	padding-top: 24px;
+	padding-top: $space-5;
 }
 
 .message {
-	padding: 12px 14px;
+	padding: $space-3 $space-4;
 	border-radius: $radius-lg;
-	max-width: 80%;
-	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+	max-width: 76%;
+	box-shadow: 0 1px 1px rgba(15, 23, 42, 0.04);
 
 	&.user {
 		background-color: $user-bubble;
@@ -32,8 +32,95 @@
 }
 
 .content {
-	line-height: 1.55;
-	white-space: pre-wrap;
+	line-height: 1.45;
+
+	// User plain text only — never on markdown HTML (newlines between <p>/<li> become huge gaps)
+	&.plain {
+		white-space: pre-wrap;
+	}
+
+	// marked injects unscoped tags; reset browser defaults to a chat-sized rhythm
+	:global {
+		p {
+			margin: 0 0 $space-5;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		ul,
+		ol,
+		pre,
+		blockquote {
+			margin: 0 0 $space-5;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		ul,
+		ol {
+			padding-left: 1.2em;
+		}
+
+		li {
+			margin: 0;
+
+			+ li {
+				margin-top: $space-2;
+			}
+
+			> p {
+				margin: 0;
+			}
+
+			> p + p {
+				margin-top: $space-3;
+			}
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin: $space-4 0 $space-2;
+			line-height: 1.25;
+			font-weight: 650;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+
+		pre {
+			overflow: auto;
+			padding: $space-3;
+			border-radius: $radius-sm;
+			background: rgba(15, 23, 42, 0.05);
+			font-size: 0.875em;
+		}
+
+		code {
+			font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+			font-size: 0.9em;
+		}
+
+		:not(pre) > code {
+			padding: 0.1em 0.35em;
+			border-radius: 4px;
+			background: rgba(15, 23, 42, 0.06);
+		}
+
+		blockquote {
+			padding-left: $space-3;
+			border-left: 3px solid $color-border-strong;
+			color: $color-text-muted;
+		}
+	}
 }
 
 .loading {
