@@ -192,3 +192,68 @@ commit that
 
 - `git status` / `git diff` / `git log` pour préparer le commit.
 - Commit des changements UI layout-agent + journalisation prompts (selon résultat du commit).
+
+
+---
+
+## 2026-07-15 20:11 — #11
+
+### Prompt exact
+
+```text
+explain this. two command that shoud make the same 
+
+@nouveau 1.txt (1-8) 
+```
+
+### Résumé de la demande
+
+- Expliquer les commandes PowerShell dans `nouveau 1.txt`, surtout les deux destinées à arrêter un serveur.
+
+### Actions réalisées
+
+- Lu `nouveau 1.txt` et le skill `log-prompts`.
+- Expliqué la différence : kill par command line `quickstart.py --serve` vs kill par ports 8000/8001 (snippet incomplet) ; le 3e bloc est un benchmark sur le port 8002.
+- Append de cette entrée dans `prompts-log.md`.
+
+---
+
+## 2026-07-15 20:13 — #12
+
+### Prompt exact
+
+```text
+Est-ce que tu as écrit un résumé du prompt comme Claude était censé l'avoir marqué à la ressource du projet, à la route du projet ?
+```
+
+### Résumé de la demande
+
+- Vérifier si le prompt précédent a bien été journalisé dans `prompts-log.md` à la racine du projet.
+
+### Actions réalisées
+
+- Confirmé que l'entrée `#11` existait déjà (journalisation faite au tour précédent).
+- Corrigé la corruption d'encodage UTF-8 causée par `Add-Content` PowerShell sur tout le fichier.
+- Restauré `#1`–`#10` depuis git, puis réécrit `#11` et `#12` correctement.
+
+---
+
+## 2026-07-15 20:14 — #13
+
+### Prompt exact
+
+```text
+D'accord, donc, euh, faites des commits pour tout ça. Explique précisément tout ce qui s'est passé, euh, split les commits dès que tu peux, et fais quelque chose de logique. Et fais-moi un rapport après, de savoir si effectivement, euh, on a eu un rapport avec le fichier prompt.log.
+```
+
+### Résumé de la demande
+
+- Créer des commits pour les changements en cours, les splitter de façon logique, expliquer ce qui s'est passé.
+- Rapporter ensuite si le journal `prompts-log.md` a bien joué son rôle.
+
+### Actions réalisées
+
+- Constaté que UI layout-agent + skill/rule `log-prompts` + entrées `#1`–`#10` étaient déjà commitées dans `2229358`.
+- Seul changement non commité : append des entrées `#11`–`#12` (puis `#13`) dans `prompts-log.md`.
+- Un seul commit logique pour le journal (pas de split possible : un seul fichier, un seul type de changement).
+- Rapport fourni sur le lien réel avec `prompts-log.md`.
