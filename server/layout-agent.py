@@ -1,8 +1,9 @@
 ﻿import argparse
+import json
 import sys
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 
 import anthropic
 from fastapi import FastAPI, HTTPException
@@ -124,6 +125,35 @@ def generate_endpoint(request: GenerateRequest):
     return {"model": model, "response": response}
 
 
+def _ndjson(payload: dict) -> str:
+    return json.dumps(payload, ensure_ascii=False) + "\n"
+
+
+def _iter_message_events(client: ClaudeClient, model: str, prompt: str, max_tokens: int, *, with_thinking: bool) -> Iterator[str]:
+    kwargs = {
+        "model": model,
+        "max_tokens": max(max_tokens, 16000) if with_thinking else max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    if with_thinking:
+        kwargs["thinking"] = {"type": "adaptive"}
+
+    with client.client.messages.stream(**kwargs) as stream:
+        for event in stream:
+            if event.type != "content_block_delta":
+                continue
+
+            delta_type = getattr(event.delta, "type", None)
+            if delta_type == "thinking_delta":
+                text = getattr(event.delta, "thinking", "") or ""
+                if text:
+                    yield _ndjson({"type": "thinking", "text": text})
+            elif delta_type == "text_delta":
+                text = getattr(event.delta, "text", "") or ""
+                if text:
+                    yield _ndjson({"type": "text", "text": text})
+
+
 @app.post("/generate/stream")
 def generate_stream_endpoint(request: GenerateRequest):
     if not request.prompt.strip():
@@ -132,19 +162,22 @@ def generate_stream_endpoint(request: GenerateRequest):
     client = get_client()
     model = request.model or client.list_models()[0]["id"]
 
-    def iter_text():
+    def iter_events():
+        yield _ndjson({"type": "meta", "model": model})
         try:
-            with client.client.messages.stream(
-                model=model,
-                max_tokens=request.max_tokens,
-                messages=[{"role": "user", "content": request.prompt}],
-            ) as stream:
-                for text in stream.text_stream:
-                    yield text
+            try:
+                yield from _iter_message_events(
+                    client, model, request.prompt, request.max_tokens, with_thinking=True
+                )
+            except Exception:
+                # Older / unsupported models: retry without extended thinking
+                yield from _iter_message_events(
+                    client, model, request.prompt, request.max_tokens, with_thinking=False
+                )
         except Exception as exc:
-            yield f"\n[error] {exc}"
+            yield _ndjson({"type": "error", "message": str(exc)})
 
-    return StreamingResponse(iter_text(), media_type="text/plain")
+    return StreamingResponse(iter_events(), media_type="application/x-ndjson")
 
 
 def build_parser():

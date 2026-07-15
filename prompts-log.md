@@ -257,3 +257,42 @@ D'accord, donc, euh, faites des commits pour tout ça. Explique précisément to
 - Seul changement non commité : append des entrées `#11`–`#12` (puis `#13`) dans `prompts-log.md`.
 - Un seul commit logique pour le journal (pas de split possible : un seul fichier, un seul type de changement).
 - Rapport fourni sur le lien réel avec `prompts-log.md`.
+
+
+---
+
+## 2026-07-15 20:19 — #14
+
+### Prompt exact
+
+```text
+Ajoute une option pour clairement Voir après une réponse. Les détails de la réponse, donc un raisonnement s'il y en a eu un. Quel modèle a répondu à la question? Et la date et l'heure de la réponse.
+```
+
+### Résumé de la demande
+
+- Après chaque réponse assistant, pouvoir ouvrir clairement des détails : raisonnement (s'il existe), modèle, date et heure.
+
+### Actions réalisées
+
+- Backend `server/layout-agent.py` : stream NDJSON (`meta` / `thinking` / `text` / `error`) + thinking adaptatif avec fallback.
+- Frontend : métadonnées sur `ChatMessage`, parser d'événements, composant `MessageDetails` (« Voir les détails »).
+- Horodatage à la fin du stream ; modèle résolu via catalogue ; raisonnement affiché ou message si absent.
+
+---
+
+## 2026-07-15 20:22 — #15
+
+### Prompt exact
+
+`	ext
+commit this
+`
+
+### Résumé de la demande
+
+- Créer un commit git pour les changements en cours (détails de réponse).
+
+### Actions réalisées
+
+- Commit des fichiers MessageDetails, stream NDJSON backend/frontend, et entrée #14 du journal.

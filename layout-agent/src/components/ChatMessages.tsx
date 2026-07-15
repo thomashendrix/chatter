@@ -1,11 +1,14 @@
 import { For, Show } from 'solid-js';
 import type { Component } from 'solid-js';
-import type { ChatMessage } from '../lib/claudeApi';
+import type { ChatMessage, ModelOption } from '../lib/claudeApi';
+import { resolveModelLabel } from '../lib/claudeApi';
 import { renderMarkdown } from '../lib/markdown';
+import { MessageDetails } from './MessageDetails';
 import styles from './ChatMessages.module.scss';
 
 type ChatMessagesProps = {
 	messages: ChatMessage[];
+	models: ModelOption[];
 	loading: boolean;
 };
 
@@ -29,6 +32,13 @@ export const ChatMessages: Component<ChatMessagesProps> = (props) => {
 							classList={{ [styles.plain]: message.role === 'user' }}
 							innerHTML={message.role === 'user' ? message.content : renderMarkdown(message.content)}
 						/>
+						<Show when={message.role === 'assistant'}>
+							<MessageDetails
+								modelLabel={resolveModelLabel(props.models, message.model)}
+								createdAt={message.createdAt}
+								reasoning={message.reasoning}
+							/>
+						</Show>
 					</div>
 				)}</For>
 			</Show>

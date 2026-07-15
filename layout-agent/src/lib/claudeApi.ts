@@ -6,7 +6,19 @@ export type ModelOption = {
 export type ChatMessage = {
 	role: 'user' | 'assistant';
 	content: string;
+	/** Model id that produced this assistant reply */
+	model?: string;
+	/** ISO timestamp when the assistant reply completed */
+	createdAt?: string;
+	/** Extended thinking / reasoning text, when the API provided any */
+	reasoning?: string;
 };
+
+export type StreamEvent =
+	| { type: 'meta'; model: string }
+	| { type: 'thinking'; text: string }
+	| { type: 'text'; text: string }
+	| { type: 'error'; message: string };
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
@@ -53,7 +65,7 @@ export async function streamResponse(args: {
 	model?: string;
 	maxTokens?: number;
 	history?: ChatMessage[];
-	onChunk: (chunk: string) => void;
+	onEvent: (event: StreamEvent) => void;
 }): Promise<void> {
 	const promptWithHistory = buildConversationPrompt(args.prompt, args.history ?? []);
 
@@ -80,6 +92,7 @@ export async function streamResponse(args: {
 	}
 
 	const decoder = new TextDecoder();
+	let buffer = '';
 
 	while (true) {
 		const { done, value } = await reader.read();
@@ -87,13 +100,36 @@ export async function streamResponse(args: {
 			break;
 		}
 
-		const chunk = decoder.decode(value, { stream: true });
-		if (chunk) {
-			args.onChunk(chunk);
+		buffer += decoder.decode(value, { stream: true });
+		const lines = buffer.split('\n');
+		buffer = lines.pop() ?? '';
+
+		for (const line of lines) {
+			const trimmed = line.trim();
+			if (!trimmed) continue;
+
+			let parsed: StreamEvent;
+			try {
+				parsed = JSON.parse(trimmed) as StreamEvent;
+			} catch {
+				// Backward-compat: plain text chunk from an older server
+				args.onEvent({ type: 'text', text: trimmed });
+				continue;
+			}
+
+			args.onEvent(parsed);
 		}
 	}
 
-	decoder.decode();
+	buffer += decoder.decode();
+	const trailing = buffer.trim();
+	if (trailing) {
+		try {
+			args.onEvent(JSON.parse(trailing) as StreamEvent);
+		} catch {
+			args.onEvent({ type: 'text', text: trailing });
+		}
+	}
 }
 
 export function buildConversationPrompt(prompt: string, history: ChatMessage[]): string {
@@ -106,4 +142,13 @@ export function buildConversationPrompt(prompt: string, history: ChatMessage[]):
 		.join('\n');
 
 	return `Conversation history:\n${formattedHistory}\n\nUser: ${prompt}`;
+}
+
+export function resolveModelLabel(models: ModelOption[], modelId?: string): string {
+	if (!modelId) {
+		return 'Inconnu';
+	}
+
+	const match = models.find((model) => model.id === modelId);
+	return match ? `${match.display_name} (${match.id})` : modelId;
 }

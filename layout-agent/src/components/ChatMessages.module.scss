@@ -28,6 +28,7 @@
 	&.assistant {
 		background-color: $color-bg;
 		align-self: flex-start;
+		max-width: min(860px, 92%);
 	}
 }
 

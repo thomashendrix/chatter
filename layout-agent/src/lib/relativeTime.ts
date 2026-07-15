@@ -26,6 +26,11 @@ const absoluteSameDay = new Intl.DateTimeFormat(undefined, {
 	minute: '2-digit',
 });
 
+const fullDateTime = new Intl.DateTimeFormat(undefined, {
+	dateStyle: 'medium',
+	timeStyle: 'medium',
+});
+
 const relativeTime = new Intl.RelativeTimeFormat(undefined, {
 	numeric: 'auto',
 });
@@ -79,6 +84,16 @@ export const formatAbsoluteTime = (value: string | number | Date, now = Date.now
 	}
 
 	return absoluteDateTime.format(date);
+};
+
+/** Explicit date + time for message metadata panels. */
+export const formatFullDateTime = (value: string | number | Date): string => {
+	const date = toDate(value);
+	if (Number.isNaN(date.getTime())) {
+		return '';
+	}
+
+	return fullDateTime.format(date);
 };
 
 /**

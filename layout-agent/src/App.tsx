@@ -118,18 +118,48 @@ const App: Component = () => {
 
 		try {
 			let assistantContent = '';
+			let assistantReasoning = '';
+			let responseModel = selectedModel();
+			let createdAt: string | undefined;
+
+			const buildAssistantMessage = (): ChatMessage => ({
+				role: 'assistant',
+				content: assistantContent,
+				model: responseModel || undefined,
+				createdAt,
+				reasoning: assistantReasoning || undefined,
+			});
 
 			await streamResponse({
 				prompt,
 				model: selectedModel(),
 				history: nextMessages,
-				onChunk: (chunk) => {
-					assistantContent += chunk;
-					updateConversation(currentConversationId, [...nextMessages, { role: 'assistant', content: assistantContent }], title);
+				onEvent: (event) => {
+					if (event.type === 'meta') {
+						responseModel = event.model;
+						return;
+					}
+
+					if (event.type === 'thinking') {
+						assistantReasoning += event.text;
+						updateConversation(currentConversationId, [...nextMessages, buildAssistantMessage()], title);
+						return;
+					}
+
+					if (event.type === 'text') {
+						assistantContent += event.text;
+						updateConversation(currentConversationId, [...nextMessages, buildAssistantMessage()], title);
+						return;
+					}
+
+					if (event.type === 'error') {
+						throw new Error(event.message);
+					}
 				},
 			});
 
-			updateConversation(currentConversationId, [...nextMessages, { role: 'assistant', content: assistantContent }], title);
+			createdAt = new Date().toISOString();
+			updateConversation(currentConversationId, [...nextMessages, buildAssistantMessage()], title);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Failed to generate response');
 		} finally {
@@ -160,7 +190,11 @@ const App: Component = () => {
 					/>
 
 					<div class={styles.panel}>
-						<ChatMessages messages={activeConversation()?.messages ?? []} loading={loading()} />
+						<ChatMessages
+							messages={activeConversation()?.messages ?? []}
+							models={models()}
+							loading={loading()}
+						/>
 
 						<div class={styles.composerShell}>
 							<PromptComposer input={input()} loading={loading()} onInputChange={setInput} onSend={sendPrompt} />
