@@ -1,0 +1,40 @@
+@use './styles/variables' as *;
+
+.page {
+	height: 100vh;
+	padding: 20px;
+}
+
+.layout {
+	display: flex;
+	gap: 16px;
+	height: 100%;
+}
+
+.main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.panel {
+	flex: 1;
+	border: 1px solid $color-border;
+	border-radius: $radius-xl;
+	background: $color-surface;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.composerShell {
+	border-top: 1px solid $color-border;
+	padding: 16px;
+	background: $color-surface-soft;
+}
+
+.error {
+	margin: 12px 0 0;
+	color: $color-danger;
+}

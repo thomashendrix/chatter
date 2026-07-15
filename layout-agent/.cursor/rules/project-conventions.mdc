@@ -1,0 +1,64 @@
+---
+description: Project coding conventions — SolidJS, tabs, component files
+alwaysApply: true
+---
+
+# layout-agent conventions
+
+## Indentation
+
+- Indent **every file** with **tabs**, never spaces.
+- Do not convert existing tabs to spaces, and do not introduce space-indented files.
+
+## Framework: SolidJS (not React)
+
+This is a **SolidJS** app (`solid-js`, `@solidjs/router`, `vite-plugin-solid`).
+
+- Do **not** use React APIs, imports, or patterns (`useState`, `useEffect`, `useMemo`, `useCallback`, `React.*`, `react` / `react-dom`).
+- Use Solid primitives: `createSignal`, `createMemo`, `createEffect`, `onMount`, `Show`, `For`, `Switch` / `Match`, etc.
+- Components are functions that return JSX; props are accessed as `props.foo` (or destructure with care — avoid breaking reactivity).
+- Prefer `import type { Component } from 'solid-js'` for typed components when useful.
+
+```tsx
+// ❌ BAD — React
+import { useState, useEffect } from 'react';
+
+// ✅ GOOD — Solid
+import { createSignal, createEffect, Show } from 'solid-js';
+```
+
+## Components: separate files
+
+- When a UI piece is reusable, has a clear responsibility, or would clutter the parent (sidebar, message list, composer, etc.), extract it into its **own file**.
+- Place components under `src/components/` (one component per file, named after the component, e.g. `ConversationSidebar.tsx`).
+- Keep shared non-UI logic in `src/lib/`.
+- Export the component from that file and import it where needed; do not leave large nested components inline in `App.tsx` when they stand alone.
+
+```tsx
+// ❌ BAD — substantial UI defined only inside App.tsx
+const ConversationSidebar = (props) => { /* large JSX */ };
+
+// ✅ GOOD — src/components/ConversationSidebar.tsx
+import type { Component } from 'solid-js';
+
+export const ConversationSidebar: Component<Props> = (props) => {
+	// ...
+};
+```
+
+## Styling: SCSS + CSS modules
+
+- Style with **SCSS CSS modules** only (e.g. `ConversationSidebar.module.scss` next to the component).
+- Do **not** use inline styles (`style={{ ... }}` / `style="..."`), plain `.css` files, or global class names for component UI.
+- Import the module and apply classes via `class` / `classList`.
+- Shared tokens (colors, radii, spacing) live in `src/styles/_variables.scss` and are pulled in with `@use`.
+- Global resets/base only in `src/styles/global.scss` (imported once from the app entry).
+
+```tsx
+// ❌ BAD
+<div style={{ padding: '16px', color: '#64748b' }} />
+
+// ✅ GOOD
+import styles from './ChatMessages.module.scss';
+<div class={styles.empty} />
+```

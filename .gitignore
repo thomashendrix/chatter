@@ -1,0 +1,17 @@
+# Secrets
+apikey.txt
+**/apikey.txt
+.env
+.env*.local
+
+# Scratch
+nouveau 1.txt
+
+# Python
+server/.venv/
+**/__pycache__/
+*.py[cod]
+
+# Frontend
+layout-agent/node_modules/
+layout-agent/dist/

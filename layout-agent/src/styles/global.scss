@@ -1,0 +1,20 @@
+@use './variables' as *;
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: $font-sans;
+	background: $color-bg;
+	color: #0f172a;
+}
