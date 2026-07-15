@@ -296,3 +296,58 @@ commit this
 ### Actions réalisées
 
 - Commit des fichiers MessageDetails, stream NDJSON backend/frontend, et entrée #14 du journal.
+
+---
+
+## 2026-07-15 20:24 — #16
+
+### Prompt exact
+
+`	ext
+@c:\Users\thoma\.cursor\projects\c-Users-thoma-Documents-Developpement-Projects-Tests-Claude\terminals\8.txt:30-33
+`
+
+### Résumé de la demande
+
+- Comprendre / corriger l’échec de git push -u origin main (refspec main).
+
+### Actions réalisées
+
+- Diagnostiqué : branche locale = master, pas main.
+- Indiqué la commande de push correcte (origin master ou rename).
+
+---
+
+## 2026-07-15 20:24 — #17
+
+### Prompt exact
+
+`	ext
+Pousse la branche avec le nom par defaut
+`
+
+### Résumé de la demande
+
+- Pousser la branche locale vers origin avec son nom par défaut (master).
+
+### Actions réalisées
+
+- git push -u origin master.
+
+---
+
+## 2026-07-15 20:25 — #18
+
+### Prompt exact
+
+`	ext
+donc master ? comment je fait par la suite pour pousser
+`
+
+### Résumé de la demande
+
+- Confirmer que la branche est master et savoir comment pousser ensuite.
+
+### Actions réalisées
+
+- Explication : oui master ; désormais git push suffit grâce au tracking.
